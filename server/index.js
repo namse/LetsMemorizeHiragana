@@ -11,9 +11,11 @@ var express = require('express'),
     server = http.createServer(app),
     io = require('socket.io')(server),
     path = require('path'),
-    port = process.env.PORT || config.port;
+    port = process.env.PORT || config.port,
+    bodyparser = require('body-parser');
 
 app.use(express.static(path.join(__dirname, 'views')));
+app.use(bodyparser());
 
 app.use(session);
 io.use(sharedsession(session, {

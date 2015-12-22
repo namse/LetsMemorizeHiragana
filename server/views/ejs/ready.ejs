@@ -1,0 +1,32 @@
+<html>
+
+<head>
+    <title>Let's Memorize Hiragana!</title>
+    <% include partials/header %>
+        <script src="/js/index.js"></script>
+        <style>
+            html {
+                overflow-y: scroll;
+            }
+        </style>
+</head>
+
+<body>
+    <div data-role="main" class="ui-content">
+        <form>
+            <fieldset data-role="controlgroup" data-iconpos="right">
+                <legend>연습할 행을 선택해주세요.</legend>
+                
+                <% for(var i = 0; i < hiraganaArray.length; i++) { %>
+                <input type="checkbox" name="checkbox-<%=i%>" id="checkbox-<%=i%>">
+                <label for="checkbox-<%=i%>"><%=hiraganaArray[i][0]%>행 ( <% for(var l = 0; l < hiraganaArray[i].length; l++) {
+                        if(l > 0) { %>, <% } %><%=hiraganaArray[i][l]%>
+                    <% } %> )</label>
+                <% } %>
+            </fieldset>
+            <a href="start" class="ui-btn">START!!</a>
+        </form>
+    </div>
+</body>
+
+</html>
