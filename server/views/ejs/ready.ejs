@@ -3,7 +3,6 @@
 <head>
     <title>Let's Memorize Hiragana!</title>
     <% include partials/header %>
-        <script src="/js/index.js"></script>
         <style>
             html {
                 overflow-y: scroll;
@@ -13,7 +12,7 @@
 
 <body>
     <div data-role="main" class="ui-content">
-        <form>
+        <form action="start" method="post">
             <fieldset data-role="controlgroup" data-iconpos="right">
                 <legend>연습할 행을 선택해주세요.</legend>
                 
@@ -24,7 +23,7 @@
                     <% } %> )</label>
                 <% } %>
             </fieldset>
-            <a href="start" class="ui-btn">START!!</a>
+            <input type="submit" value="START!!">
         </form>
     </div>
 </body>

@@ -2,7 +2,7 @@ var express = require('express'),
     app = express(),
     http = require('http'),
     config = require('getconfig'),
-    sharedsession = require("express-socket.io-session"),
+    sharedSession = require("express-socket.io-session"),
     session = require("express-session")({
         secret: config.sessionSecret,
         resave: true,
@@ -12,13 +12,14 @@ var express = require('express'),
     io = require('socket.io')(server),
     path = require('path'),
     port = process.env.PORT || config.port,
-    bodyparser = require('body-parser');
+    bodyParser = require('body-parser');
 
 app.use(express.static(path.join(__dirname, 'views')));
-app.use(bodyparser());
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json());
 
 app.use(session);
-io.use(sharedsession(session, {
+io.use(sharedSession(session, {
     autoSave: true
 }));
 
