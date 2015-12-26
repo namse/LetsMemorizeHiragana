@@ -9,3 +9,6 @@ NodeJS에서 할 일
 2. 그 외 나머지 껍데기 먼저 만들자
 
 Writing Page html만들기.
+
+TODO
+-- 나중에 localstorage 를 사용하여 테스트 중간에 F5를 눌러도 기존까지의 test 정보를 저장해놓아서 정상 작동하도록.

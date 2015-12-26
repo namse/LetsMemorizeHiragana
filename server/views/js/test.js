@@ -2,6 +2,7 @@ var testCharacterArray = []
 var testCharacterQueue = [];
 var scoringSheet; // "yet", "incorrect", "correct"
 var lineWidth = 5;
+var isLoadingSuccess = false;
 /* global hiraganaArray */
 /* global keyHiraganaValueKoreanDictionary */
 
@@ -11,10 +12,18 @@ $(document).on("pagebeforeshow", '#page-test-loading', function() {
     initTestCharacterQueue(testCharacterArray);
     initScoringSheet(testCharacterArray);
     CANVAS.init();
+    
+    isLoadingSuccess = true;
+    
     OnNext();
 });
 
 $(document).on("pageshow", '#page-test-writing', function() {
+    // check it is strange approach
+    if(isLoadingSuccess == false){
+        $.mobile.changePage("#page-test-loading");
+        return;
+    }
     resize();
 });
 
