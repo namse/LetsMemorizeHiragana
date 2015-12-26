@@ -9,7 +9,6 @@ var express = require('express'),
         saveUninitialized: true
     }),
     server = http.createServer(app),
-    io = require('socket.io')(server),
     path = require('path'),
     port = process.env.PORT || config.port,
     bodyParser = require('body-parser');
@@ -19,15 +18,9 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json());
 
 app.use(session);
-io.use(sharedSession(session, {
-    autoSave: true
-}));
 
 server.listen(port);
 
 
 // http handling    
 require('./routes.js')(app);
-
-// socket.io handling
-require('./io.js')(io);

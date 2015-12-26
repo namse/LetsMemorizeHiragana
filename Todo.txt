@@ -8,4 +8,4 @@ NodeJS에서 할 일
 1. route 및 ejs까지 셋팅. -- 완료
 2. 그 외 나머지 껍데기 먼저 만들자
 
-checkbox가 화면 넘어서 계속 나와도 문제 없도록 해야함
+Writing Page html만들기.

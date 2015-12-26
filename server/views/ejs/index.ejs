@@ -2,12 +2,48 @@
 
 <head>
     <title>Let's Memorize Hiragana!</title>
-    <% include partials/header %>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, width=device-width, height=device-height">
+    <link rel="stylesheet" href="/library/jqm/jquery.mobile-1.4.5.min.css">
+    <link rel="stylesheet" href="/css/fullScreen.css">
+    <link rel="stylesheet" href="/css/test.css">
+    
+    <script src="/library/jquery-2.1.4.min.js"></script>
+    <script src="/library/jqm/jquery.mobile-1.4.5.min.js"></script>
+    <script type="text/javascript" src="/js/global.js"></script>
+    <script type="text/javascript" src="/js/ready.js"></script>
+    <script type="text/javascript" src="/js/test.js"></script>
 </head>
-
 <body>
-    <div data-role="main" class="ui-content">
-        <a href="ready" class="ui-btn" style="top: 50%;">Go to Page Ready</a>
+    <div data-role='page' id='page-index'>
+        <div data-role="main" class="ui-content">
+            <a href="#page-ready" class="ui-btn" style="top: 50%;">Go to Page Ready</a>
+        </div>
+    </div>
+    
+    <div data-role='page' id='page-ready'>
+        <div data-role="main" class="ui-content">
+            <form action="#page-test-loading" data-ajax="false">
+                <fieldset data-role="controlgroup" data-iconpos="right">
+                    <legend>연습할 행을 선택해주세요.</legend>
+                </fieldset>
+                <input type="submit" value="START!!">
+            </form>
+        </div>
+    </div>
+    
+    <div data-role="page" id='page-test-loading'>
+    </div>
+    
+    <div data-role="page" id='page-test-writing'>
+        <div data-role="main" class="ui-content">
+            <h1 id='test-writing-korean' align='center'></h1>
+            <div id='test-writing-canvas-container'>
+                <canvas id='test-writing-canvas' width="10" height="10"></canvas>
+            </div>
+            <button id='test-writing-clear-button' class="ui-button" data-inline="true">지우기</button>
+            <button id='test-writing-submit' class="ui-button" data-inline="true">제출</button>
+        </div>
     </div>
 </body>
 

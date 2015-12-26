@@ -1,0 +1,3 @@
+.ui-content {
+    height: calc(100vh - 32px);
+}

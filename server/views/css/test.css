@@ -1,0 +1,33 @@
+html {
+    overflow-y: visible;
+}
+
+#test-writing-korean {
+    display: inline-block;
+    margin: 10px 10px 10px 10px;
+    width: calc(100% - 10px - 10px);
+    height: 40%;
+    line-height: 93%;
+    border-style: outset;
+    font-size: 0;
+}
+
+#test-writing-canvas-container {
+    display: inline-block;
+    margin: 10px 10px 0px 10px;
+    width: calc(100% - 10px - 10px);
+    height: 40%;
+    border-style: inset;
+}
+
+#test-writing-submit {
+    position: absolute;
+    display: inline-block;
+    right: 10px;
+    
+}
+
+#test-writing-clear-button {
+    display: inline-block;
+    margin-left: 10px;
+}
