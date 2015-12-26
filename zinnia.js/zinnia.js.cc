@@ -1,104 +1,143 @@
 // hello.cc
 #include <node.h>
+#include <string>
+#include <v8.h>
+#include <uv.h>
+#include <vector>
 #include "zinnia.h"
 #include "my_model.h"
 using namespace v8;
 
 static v8::Handle<v8::Object> myModule;
 
+struct Position {
+		int x, y;
+		Position(int x_, int y_): x(x_), y(y_) {}
+	};
+	
+struct Work {
+	uv_work_t  request;
+	Persistent<Function> callback;
 
-// native blocking/compute intensive function
-void delay(int seconds) {
-    int i;
-    int j;
+	int width, height;
+	
+	using stroke = std::vector<Position>;
+	std::vector<stroke> strokes;
+	std::string result;
+	bool isSuccess;
 
-    // a long computation
-    for(i=0;i<2000000;++i) {
-        for(j=0;j<400;++j)   {
-                count = count * seconds;
-        }
-    }
+	Work() {
+		width = height = -1;
+		isSuccess = false;
+	}
 
-    /**
-     * or a blocking call
-     * sleep(seconds);
-     */
-}
-
-// the 'baton' is the carrier for data between functions
-struct DelayBaton
-{
-    // required
-    uv_work_t request;                  // libuv
-    Persistent<Function> callback;      // javascript callback
-
-    // optional : data goes here.
-    // data that doesn't go back to javascript can be any typedef
-    // data that goes back to javascript needs to be a supported type
-    int         seconds;
-    char        greeting[256];
+	void FailWith(std::string reason) {
+		result = reason;
+		isSuccess = false;
+	}
 };
 
-// called by libuv worker in separate thread
-static void DelayAsync(uv_work_t *req)
+static void WorkAsync(uv_work_t *req)
 {
-    DelayBaton *baton = static_cast<DelayBaton *>(req->data);
-    delay(baton->seconds);
+	Work *work = static_cast<Work *>(req->data);
+
+	auto *recognizer = zinnia::Recognizer::create();
+
+	if (!recognizer->open(my_model, my_model_size)) {
+		work->FailWith(recognizer->what());
+		delete recognizer;
+		return;
+	}
+
+
+	auto *character = zinnia::Character::create();
+	character->clear();
+	character->set_width(work->width);
+	character->set_height(work->height);
+	int strokeIndex = 0;
+	for (auto stroke : work->strokes) {
+		for (auto position : stroke) {
+			character->add(strokeIndex, position.x, position.y);
+		}
+		++strokeIndex;
+	}
+
+	zinnia::Result *result = recognizer->classify(*character, 1);
+	if (!result) {
+		work->FailWith(recognizer->what());
+		delete recognizer;
+		delete character;
+		delete result;
+		return;
+	}
+
+
+	work->result = std::string(result->value(0));
+	
+	delete result;
+	delete character;
+	delete recognizer;
 }
+
 
 // called by libuv in event loop when async function completes
-static void DelayAsyncAfter(uv_work_t *req,int status)
+static void WorkAsyncComplete(uv_work_t *req, int status)
 {
-    // get the reference to the baton from the request
-    DelayBaton *baton = static_cast<DelayBaton *>(req->data);
+	Isolate * isolate = Isolate::GetCurrent();
+	v8::HandleScope handleScope(isolate); // Required for Node 4.x
 
-    // set up return arguments
-    Handle<Value> argv[] =
-        {
-            Handle<Value>(Int32::New(baton->seconds)),
-            Handle<Value>(String::New(baton->greeting))
-        };
+	Work *work = static_cast<Work *>(req->data);
+	Local<Boolean> isSuccess = Boolean::New(isolate, work->isSuccess);
+	Local<String> result = String::NewFromUtf8(isolate, work->result.c_str());
 
-    // execute the callback
-    baton->callback->Call(Context::GetCurrent()->Global(),2,argv);
+// set up return arguments
+	Handle<Value> argv[] = { isSuccess, result };
 
-    // dispose the callback object from the baton
-    baton->callback.Dispose();
+	// execute the callback
+	Local<Function>::New(isolate, work->callback)->
+	Call(isolate->GetCurrentContext()->Global(), 2, argv);
 
-    // delete the baton object
-    delete baton;
+	// Free up the persistent function callback
+	work->callback.Reset();
+
+	delete work;
 }
 
-// javascript callable function
-Handle<Value> Delay(const Arguments &args)
-{
-    // create 'baton' data carrier
-    DelayBaton *baton = new DelayBaton;
 
-    // get callback argument
-    Handle<Function> cb = Handle<Function>::Cast(args[2]);
+// width, height, [[x,y], [x,y] ... ]
+void CalculateResultsAsync(const v8::FunctionCallbackInfo<v8::Value>&args) {
+	Isolate* isolate = args.GetIsolate();
 
-    // attach baton to uv work request
-    baton->request.data = baton;
+	Work * work = new Work();
+	work->request.data = work;
 
-    // assign incoming arguments to baton
-    baton->seconds =   args[0]->Int32Value();
+	work->width = args[0]->IntegerValue();
+	work->height = args[1]->IntegerValue();
+	Local<Array> strokes = Local<Array>::Cast(args[2]);
+	for (unsigned int strokeIndex = 0 ; strokeIndex < strokes->Length(); ++strokeIndex) {
+		Local<Array> positions = Local<Array>::Cast(strokes->Get(strokeIndex));
+		work->strokes.push_back(Work::stroke());
 
-    // point at the argument as a string, then copy it to the baton
-    v8::String::Utf8Value str(args[1]);
-    strncpy(baton->greeting,*str,sizeof(baton->greeting));
+		for (unsigned int positionIndex = 0 ; positionIndex < positions->Length(); ++positionIndex) {
+			Local<Array> position = Local<Array>::Cast(positions->Get(positionIndex));
+			int x = Local<Integer>::Cast(position->Get(0))->IntegerValue();
+			int y = Local<Integer>::Cast(position->Get(1))->IntegerValue();
+			work->strokes.at(strokeIndex).push_back(Position(x, y));
+		}
+	}
 
-    // assign callback to baton
-    baton->callback = Persistent<Function>::New(cb);
+	// store the callback from JS in the work package so we can
+	// invoke it later
+	Local<Function> callback = Local<Function>::Cast(args[1]);
+	work->callback.Reset(isolate, callback);
 
-    // queue the async function to the event loop
-    // the uv default loop is the node.js event loop
-    uv_queue_work(uv_default_loop(),&baton->request,DelayAsync,DelayAsyncAfter);
+	// kick of the worker thread
+	uv_queue_work(uv_default_loop(), &work->request,
+	              WorkAsync, WorkAsyncComplete);
 
-    // nothing returned
-    return Undefined();
+	args.GetReturnValue().Set(Undefined(isolate));
+
 }
-
 
 void Add(const FunctionCallbackInfo<Value>& args) {
 	Isolate* isolate = Isolate::GetCurrent();
@@ -118,9 +157,9 @@ void Add(const FunctionCallbackInfo<Value>& args) {
 
 
 
-    zinnia::Recognizer *recognizer = zinnia::Recognizer::create();
+	zinnia::Recognizer *recognizer = zinnia::Recognizer::create();
 
-    
+
 	double value = 0;
 	if (!recognizer->open(my_model, my_model_size)) {
 		const char * what = recognizer->what();
@@ -131,16 +170,13 @@ void Add(const FunctionCallbackInfo<Value>& args) {
 	Local<Number> num = Number::New(isolate, value);
 
 	args.GetReturnValue().Set(num);
-    delete recognizer;
+	delete recognizer;
 }
 
 void Init(Handle<Object> exports) {
 	NODE_SET_METHOD(exports, "add", Add);
-	 // add the async function to the exports for this object
-  exports->Set(
-                String::NewSymbol("delay"),                          // javascript function name
-                FunctionTemplate::New(Delay)->GetFunction()          // attach 'Delay' function to javascript name
-              );
+	// add the async function to the exports for this object
+	NODE_SET_METHOD(exports, "calculate_results_async", CalculateResultsAsync);
 }
 
 NODE_MODULE(zinnia, Init)

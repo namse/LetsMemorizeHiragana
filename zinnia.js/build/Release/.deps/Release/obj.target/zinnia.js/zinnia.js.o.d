@@ -5,6 +5,13 @@ Release/obj.target/zinnia.js/zinnia.js.o: ../zinnia.js.cc \
  /home/ubuntu/.node-gyp/4.1.1/include/node/v8-version.h \
  /home/ubuntu/.node-gyp/4.1.1/include/node/v8config.h \
  /home/ubuntu/.node-gyp/4.1.1/include/node/node_version.h \
+ /home/ubuntu/.node-gyp/4.1.1/include/node/v8.h \
+ /home/ubuntu/.node-gyp/4.1.1/include/node/uv.h \
+ /home/ubuntu/.node-gyp/4.1.1/include/node/uv-errno.h \
+ /home/ubuntu/.node-gyp/4.1.1/include/node/uv-version.h \
+ /home/ubuntu/.node-gyp/4.1.1/include/node/uv-unix.h \
+ /home/ubuntu/.node-gyp/4.1.1/include/node/uv-threadpool.h \
+ /home/ubuntu/.node-gyp/4.1.1/include/node/uv-linux.h \
  ../zinnia/zinnia/zinnia.h ../my_model.h
 ../zinnia.js.cc:
 /home/ubuntu/.node-gyp/4.1.1/include/node/node.h:
@@ -12,5 +19,12 @@ Release/obj.target/zinnia.js/zinnia.js.o: ../zinnia.js.cc \
 /home/ubuntu/.node-gyp/4.1.1/include/node/v8-version.h:
 /home/ubuntu/.node-gyp/4.1.1/include/node/v8config.h:
 /home/ubuntu/.node-gyp/4.1.1/include/node/node_version.h:
+/home/ubuntu/.node-gyp/4.1.1/include/node/v8.h:
+/home/ubuntu/.node-gyp/4.1.1/include/node/uv.h:
+/home/ubuntu/.node-gyp/4.1.1/include/node/uv-errno.h:
+/home/ubuntu/.node-gyp/4.1.1/include/node/uv-version.h:
+/home/ubuntu/.node-gyp/4.1.1/include/node/uv-unix.h:
+/home/ubuntu/.node-gyp/4.1.1/include/node/uv-threadpool.h:
+/home/ubuntu/.node-gyp/4.1.1/include/node/uv-linux.h:
 ../zinnia/zinnia/zinnia.h:
 ../my_model.h:
