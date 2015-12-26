@@ -24,3 +24,7 @@ server.listen(port);
 
 // http handling    
 require('./routes.js')(app);
+
+
+var zinnia = require('../zinnia.js/build/Release/zinnia.js.node');
+console.log(zinnia.add(path.join(__dirname, '../data/tegaki-zinnia-japanese-light-0.3/handwriting-ja.model')));
