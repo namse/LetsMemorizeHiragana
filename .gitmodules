@@ -1,0 +1,6 @@
+[submodule "recognizer/zinnia"]
+	path = recognizer/zinnia
+	url = https://github.com/taku910/zinnia.git
+[submodule "data/tegaki"]
+	path = data/tegaki
+	url = https://github.com/tegaki/tegaki.git
