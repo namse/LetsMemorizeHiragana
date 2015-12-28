@@ -1,0 +1,1 @@
+cmd_Debug/obj.target/zinnia.js.node := g++ -shared -pthread -rdynamic -m64  -Wl,-soname=zinnia.js.node -o Debug/obj.target/zinnia.js.node -Wl,--start-group Debug/obj.target/zinnia.js/zinnia.js.o -Wl,--end-group -Wl,-rpath,/usr/local/lib/ /usr/local/lib/libzinnia.so

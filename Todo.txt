@@ -26,3 +26,14 @@ pool.getRecognizer 하면 하나씩 튀어 나온다.
 
 3. thread pool 과 함께 동작시킨다.
 https://gist.github.com/dmh2000/9519489
+
+
+
+
+
+css
+ios의 경우 위에 nav bar랑 bottom bar가 완전 신경쓰임;;
+
+
+
+return 으로 args가 잘 들어오는지 먼저 확인해볼것.

@@ -4,7 +4,7 @@ html {
 
 #test-writing-korean {
     display: inline-block;
-    margin: 10px 10px 10px 10px;
+    margin: 0px 10px 10px 10px;
     width: calc(100% - 10px - 10px);
     height: 40%;
     line-height: 93%;

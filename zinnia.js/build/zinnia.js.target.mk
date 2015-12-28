@@ -35,7 +35,8 @@ INCS_Debug := \
 	-I/home/ubuntu/.node-gyp/4.1.1/src \
 	-I/home/ubuntu/.node-gyp/4.1.1/deps/uv/include \
 	-I/home/ubuntu/.node-gyp/4.1.1/deps/v8/include \
-	-I$(srcdir)/zinnia/zinnia
+	-I$(srcdir)/zinnia/zinnia \
+	-I/usr/local/include
 
 DEFS_Release := \
 	'-DNODE_GYP_MODULE_NAME=zinnia.js' \
@@ -70,7 +71,8 @@ INCS_Release := \
 	-I/home/ubuntu/.node-gyp/4.1.1/src \
 	-I/home/ubuntu/.node-gyp/4.1.1/deps/uv/include \
 	-I/home/ubuntu/.node-gyp/4.1.1/deps/v8/include \
-	-I$(srcdir)/zinnia/zinnia
+	-I$(srcdir)/zinnia/zinnia \
+	-I/usr/local/include
 
 OBJS := \
 	$(obj).target/$(TARGET)/zinnia.js.o

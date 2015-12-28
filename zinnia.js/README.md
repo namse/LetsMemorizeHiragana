@@ -1,5 +1,6 @@
 1. npm install -g node-gyp
-2. make zinnia
+
+2. install zinnia
 % tar zxfv zinnia-X.X.tar.gz
 % cd zinnia-X.X
 % ./configure
@@ -7,7 +8,7 @@
 % su
 # make install
 
-3. node-gyp rebuild
+5. node-gyp rebuild
 
 
 how to make model

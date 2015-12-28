@@ -1,10 +1,17 @@
-var testCharacterArray = []
+/* global hiraganaArray */
+/* global keyHiraganaValueKoreanDictionary */
+/* global dcodeIO */
+
+var ProtoBuf = dcodeIO.ProtoBuf;
+var ProtoBuilder = ProtoBuf.loadProtoFile("/proto/packet.proto");
+var ProtoPacket = ProtoBuilder.build("Packet");
+var ProtoStroke = ProtoPacket.Stroke;
+var ProtoPosition = ProtoStroke.Position;
+var testCharacterArray = [];
 var testCharacterQueue = [];
 var scoringSheet; // "yet", "incorrect", "correct"
 var lineWidth = 5;
 var isLoadingSuccess = false;
-/* global hiraganaArray */
-/* global keyHiraganaValueKoreanDictionary */
 
 $(document).on("pagebeforeshow", '#page-test-loading', function() {
     JQUERY_OBJECT.init();
@@ -100,9 +107,22 @@ function OnNext() {
 function onWritingPageInitAndOpen() {
     // 화면 초기화
     JQUERY_OBJECT.writing.koreanCharacter.text(keyHiraganaValueKoreanDictionary[testCharacterQueue[0]]);
-    
+    $("#test-writing-submit").click(function(){
+        requestRecognizion();
+    })
     // 화면 전환
     $.mobile.changePage("#page-test-writing");
+}
+
+function requestRecognizion() {
+    //STROKE_DATA.compress();
+    var data = STROKE_DATA.getProtoPacket().encode64();
+    $.post('recognize', {
+        'data': data
+        }, function(data){
+        STROKE_DATA.reset();
+        console.log(data);
+    });
 }
 
 function onReadingPageInitAndOpen() {
@@ -157,6 +177,53 @@ var CANVAS = {
     }
 
 }
+function Position(x, y) {
+    this.x = x;
+    this.y = y;
+}
+var STROKE_DATA = {
+    data: [],
+    add: function(position, isNewStroke) {
+        if(isNewStroke || STROKE_DATA.data.length == 0){
+            STROKE_DATA.data.push([]);
+        }
+        STROKE_DATA.data[STROKE_DATA.data.length - 1].push(position);
+    },
+    compress: function() {
+        for(var strokeIndex = 0; strokeIndex < STROKE_DATA.data.length; strokeIndex++){
+            var stroke = STROKE_DATA.data[strokeIndex];
+            if(stroke.length > 3){
+                var stroke = STROKE_DATA.data[strokeIndex];
+                var firstPosition = stroke[0];
+                var centerPosition = stroke[Math.floor(stroke.length/2)];
+                var lastPosition = stroke[stroke.length - 1];
+                
+                stroke.splice(0, stroke.length);
+                stroke.push(firstPosition);
+                stroke.push(centerPosition);
+                stroke.push(lastPosition);
+            }
+        }
+    },
+    // [strokeIndex, x, y strokeIndex, x, y, ...]
+    getProtoPacket: function() {
+        var protoStrokes = [];
+        for(var strokeIndex = 0; strokeIndex < STROKE_DATA.data.length; strokeIndex++){
+            var stroke = STROKE_DATA.data[strokeIndex];
+            var protoPositions = [];
+            for(var positionIndex = 0; positionIndex < stroke.length; positionIndex++){
+                var position = stroke[positionIndex];
+                var protoPosition = new ProtoPosition(position.x, position.y);
+                protoPositions.push(protoPosition);
+            }
+            protoStrokes.push(new ProtoStroke(protoPositions));
+        }
+        return new ProtoPacket(JQUERY_OBJECT.writing.canvas[0].width, JQUERY_OBJECT.writing.canvas[0].height, protoStrokes);
+    },
+    reset: function(){
+        STROKE_DATA.data = [];
+    }
+}
 
 // prototype to	start drawing on touch using canvas moveTo and lineTo
 $.fn.drawTouch = function() {
@@ -168,6 +235,7 @@ $.fn.drawTouch = function() {
         CANVAS.canvasCTX.strokeStyle = "#000";
         CANVAS.canvasCTX.lineWidth = lineWidth;
         CANVAS.canvasCTX.moveTo(x, y);
+        STROKE_DATA.add(new Position(x,y), true);
     };
     var move = function(e) {
         e.preventDefault();
@@ -178,6 +246,7 @@ $.fn.drawTouch = function() {
         CANVAS.canvasCTX.lineWidth = lineWidth;
         CANVAS.canvasCTX.lineTo(x, y);
         CANVAS.canvasCTX.stroke();
+        STROKE_DATA.add(new Position(x,y), false);
     };
     $(this).on("touchstart", start);
     $(this).on("touchmove", move);
@@ -193,7 +262,6 @@ $.fn.drawPointer = function() {
         CANVAS.canvasCTX.strokeStyle = "#000";
         CANVAS.canvasCTX.lineWidth = lineWidth;
         CANVAS.canvasCTX.moveTo(x, y);
-        console.log(x, y);
     };
     var move = function(e) {
         e.preventDefault();
@@ -204,7 +272,6 @@ $.fn.drawPointer = function() {
         CANVAS.canvasCTX.lineWidth = lineWidth;
         CANVAS.canvasCTX.lineTo(x, y);
         CANVAS.canvasCTX.stroke();
-        console.log(x, y);
     };
     $(this).on("MSPointerDown", start);
     $(this).on("MSPointerMove", move);
@@ -221,7 +288,7 @@ $.fn.drawMouse = function() {
         CANVAS.canvasCTX.strokeStyle = "#000";
         CANVAS.canvasCTX.lineWidth = lineWidth;
         CANVAS.canvasCTX.moveTo(x, y);
-        console.log(x, y);
+        STROKE_DATA.add(new Position(x,y), true);
     };
     var move = function(e) {
         if (clicked) {
@@ -231,7 +298,7 @@ $.fn.drawMouse = function() {
             CANVAS.canvasCTX.lineWidth = lineWidth;
             CANVAS.canvasCTX.lineTo(x, y);
             CANVAS.canvasCTX.stroke();
-            console.log(x, y);
+            STROKE_DATA.add(new Position(x,y), false);
         }
     };
     var stop = function(e) {

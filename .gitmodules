@@ -4,3 +4,6 @@
 [submodule "data/tegaki"]
 	path = data/tegaki
 	url = https://github.com/tegaki/tegaki.git
+[submodule "zinnia.js/protobuf"]
+	path = zinnia.js/protobuf
+	url = https://github.com/google/protobuf.git

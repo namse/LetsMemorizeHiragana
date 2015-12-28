@@ -3,38 +3,49 @@
 <head>
     <title>Let's Memorize Hiragana!</title>
     <meta charset="UTF-8">
-    <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, width=device-width, height=device-height">
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0">
+
     <link rel="stylesheet" href="/library/jqm/jquery.mobile-1.4.5.min.css">
     <link rel="stylesheet" href="/css/fullScreen.css">
     <link rel="stylesheet" href="/css/test.css">
-    
+
     <script src="/library/jquery-2.1.4.min.js"></script>
     <script src="/library/jqm/jquery.mobile-1.4.5.min.js"></script>
+    <script src="/library/long.min.js"></script>
+    <script src="/library/bytebuffer.min.js"></script>
+    <script src="/library/protobuf.min.js"></script>
     <script type="text/javascript" src="/js/global.js"></script>
     <script type="text/javascript" src="/js/ready.js"></script>
     <script type="text/javascript" src="/js/test.js"></script>
 </head>
+
 <body>
     <div data-role='page' id='page-index'>
         <div data-role="main" class="ui-content">
             <a href="#page-ready" class="ui-btn" style="top: 50%;">Go to Page Ready</a>
         </div>
     </div>
-    
+
     <div data-role='page' id='page-ready'>
-        <div data-role="main" class="ui-content">
+        <div data-role="main">
             <form action="#page-test-loading" data-ajax="false">
                 <fieldset data-role="controlgroup" data-iconpos="right">
                     <legend>연습할 행을 선택해주세요.</legend>
                 </fieldset>
                 <input type="submit" value="START!!">
             </form>
+            <div data-role="footer">
+                <h4>Footer content</h4>
+            </div>
         </div>
     </div>
-    
+
     <div data-role="page" id='page-test-loading'>
     </div>
-    
+
     <div data-role="page" id='page-test-writing'>
         <div data-role="main" class="ui-content">
             <h1 id='test-writing-korean' align='center'></h1>

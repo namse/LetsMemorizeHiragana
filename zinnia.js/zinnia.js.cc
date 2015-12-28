@@ -8,7 +8,6 @@
 #include "my_model.h"
 using namespace v8;
 
-static v8::Handle<v8::Object> myModule;
 
 struct Position {
 		int x, y;
@@ -71,7 +70,7 @@ static void WorkAsync(uv_work_t *req)
 		return;
 	}
 
-
+	work->isSuccess = true;
 	work->result = std::string(result->value(0));
 	
 	delete result;
@@ -81,7 +80,7 @@ static void WorkAsync(uv_work_t *req)
 
 
 // called by libuv in event loop when async function completes
-static void WorkAsyncComplete(uv_work_t *req, int status)
+static void RecognizeComplete(uv_work_t *req, int status)
 {
 	Isolate * isolate = Isolate::GetCurrent();
 	v8::HandleScope handleScope(isolate); // Required for Node 4.x
@@ -90,7 +89,7 @@ static void WorkAsyncComplete(uv_work_t *req, int status)
 	Local<Boolean> isSuccess = Boolean::New(isolate, work->isSuccess);
 	Local<String> result = String::NewFromUtf8(isolate, work->result.c_str());
 
-// set up return arguments
+	// set up return arguments
 	Handle<Value> argv[] = { isSuccess, result };
 
 	// execute the callback
@@ -105,15 +104,17 @@ static void WorkAsyncComplete(uv_work_t *req, int status)
 
 
 // width, height, [[x,y], [x,y] ... ]
-void CalculateResultsAsync(const v8::FunctionCallbackInfo<v8::Value>&args) {
+void RecognizeRequest(const v8::FunctionCallbackInfo<v8::Value>&args) {
 	Isolate* isolate = args.GetIsolate();
+	HandleScope scope(isolate);
 
 	Work * work = new Work();
 	work->request.data = work;
-
+	
 	work->width = args[0]->IntegerValue();
 	work->height = args[1]->IntegerValue();
 	Local<Array> strokes = Local<Array>::Cast(args[2]);
+	
 	for (unsigned int strokeIndex = 0 ; strokeIndex < strokes->Length(); ++strokeIndex) {
 		Local<Array> positions = Local<Array>::Cast(strokes->Get(strokeIndex));
 		work->strokes.push_back(Work::stroke());
@@ -128,12 +129,12 @@ void CalculateResultsAsync(const v8::FunctionCallbackInfo<v8::Value>&args) {
 
 	// store the callback from JS in the work package so we can
 	// invoke it later
-	Local<Function> callback = Local<Function>::Cast(args[1]);
+	Local<Function> callback = Local<Function>::Cast(args[3]);
 	work->callback.Reset(isolate, callback);
 
 	// kick of the worker thread
 	uv_queue_work(uv_default_loop(), &work->request,
-	              WorkAsync, WorkAsyncComplete);
+	              WorkAsync, RecognizeComplete);
 
 	args.GetReturnValue().Set(Undefined(isolate));
 
@@ -155,28 +156,16 @@ void Add(const FunctionCallbackInfo<Value>& args) {
 		return;
 	}
 
-
-
-	zinnia::Recognizer *recognizer = zinnia::Recognizer::create();
-
-
 	double value = 0;
-	if (!recognizer->open(my_model, my_model_size)) {
-		const char * what = recognizer->what();
-		args.GetReturnValue().Set(String::NewFromUtf8(isolate, what));
-		return;
-	}
-
 	Local<Number> num = Number::New(isolate, value);
 
 	args.GetReturnValue().Set(num);
-	delete recognizer;
 }
 
 void Init(Handle<Object> exports) {
 	NODE_SET_METHOD(exports, "add", Add);
 	// add the async function to the exports for this object
-	NODE_SET_METHOD(exports, "calculate_results_async", CalculateResultsAsync);
+	NODE_SET_METHOD(exports, "recognize", RecognizeRequest);
 }
 
 NODE_MODULE(zinnia, Init)
