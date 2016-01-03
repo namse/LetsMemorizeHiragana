@@ -1,10 +1,10 @@
-/* global EventListener */
+var EventListener = require('./event-listener.js');
 var DrawableCanvas = function(_jqueryCanvasObject, _jqueryCanvasContainerObject){
     EventListener.call(this);    
     
     
-    var jqueryCanvasObject = jqueryCanvasObject;
-    var jqueryCanvasContainerObject = jqueryCanvasContainerObject;
+    var jqueryCanvasObject = _jqueryCanvasObject;
+    var jqueryCanvasContainerObject = _jqueryCanvasContainerObject;
     var domCanvas = jqueryCanvasObject[0];
     var canvasCTX = domCanvas.getContext("2d");
     var self = this;
@@ -25,25 +25,25 @@ var DrawableCanvas = function(_jqueryCanvasObject, _jqueryCanvasContainerObject)
     // event
     // 'strokeStart', 'strokeMove'
     
-    function strokeStart(pageX, pageY){
+    this.strokeStart = function(pageX, pageY){
         canvasCTX.beginPath();
         var x = pageX - jqueryCanvasObject.offset().left;
         var y = pageY - jqueryCanvasObject.offset().top;
         canvasCTX.strokeStyle = self.strokeStyle;
         canvasCTX.lineWidth = self.lineWidth;
         canvasCTX.moveTo(x, y);
-        self.fireEvent('strokeStart', [x, y]);
-    }
+        this.fireEvent('strokeStart', [x, y]);
+    };
     
-    function strokeMove(pageX, pageY){
+    this.strokeMove = function(pageX, pageY){
         var x = pageX - jqueryCanvasObject.offset().left;
         var y = pageY - jqueryCanvasObject.offset().top;
         canvasCTX.strokeStyle = self.strokeStyle;
         canvasCTX.lineWidth = self.lineWidth;
-        canvasCTX.moveTo(x, y);
+        canvasCTX.lineTo(x, y);
         canvasCTX.stroke();
-        self.fireEvent('strokeMove', [x, y]);
-    }
+        this.fireEvent('strokeMove', [x, y]);
+    };
     
     
     
@@ -73,7 +73,7 @@ var DrawableCanvas = function(_jqueryCanvasObject, _jqueryCanvasContainerObject)
     
     jqueryCanvasObject.on("mousedown", function(e){
         self.clicked = true;
-        self.strokeMove(e.pageX, e.pageY);
+        self.strokeStart(e.pageX, e.pageY);
     });
     
     
@@ -87,3 +87,7 @@ var DrawableCanvas = function(_jqueryCanvasObject, _jqueryCanvasContainerObject)
     });
     
 };
+
+DrawableCanvas.prototype = new EventListener();
+
+module.exports = DrawableCanvas;

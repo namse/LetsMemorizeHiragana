@@ -1,18 +1,9 @@
-var TestManager = function() {
-
-    /* global HiraganaArray */
-    /* global KeyHiraganaValueKoreanDictionary */
-    /* global dcodeIO */
-    /* global JqueryObject */
-    /* global TestWritingPage */
-
+var TestManager = (function() {
 
     var testHiraganaArray = [];
     var testHiraganaQueue = [];
     var scoringSheet = {}; // key : hiragana ---- value :  Score.VALUE
-    var lineWidth = 5;
     var isLoadingSuccess = false;
-
     $(document).on("pagebeforeshow", '#page-test-loading', function() {
         initTestHiraganaArray();
         initTestHiraganaQueue(testHiraganaArray);
@@ -20,7 +11,7 @@ var TestManager = function() {
 
         isLoadingSuccess = true;
 
-        onNext();
+        TestManager.onNext();
     });
 
 
@@ -81,48 +72,69 @@ var TestManager = function() {
         }
     }
 
-    function getCurrentHiragana() {
-        return testHiraganaQueue[0];
-    }
+    return {
+        getIsLoadingSuccess: function() {
+            return isLoadingSuccess;
+        },
 
-    function getCurrentKorean() {
-        return getKoreanCharacterWithHiragana(getCurrentHiragana());
-    }
+        getCurrentHiragana: function() {
+            return testHiraganaQueue[0];
+        },
 
-    function getKoreanCharacterWithHiragana(hiragana) {
-        return KeyHiraganaValueKoreanDictionary[hiragana];
-    }
+        getCurrentKorean: function() {
+            return this.getKoreanCharacterWithHiragana(this.getCurrentHiragana());
+        },
 
-    function onNext() {
-        if (true) { //Math.random() < 0.5){
-            // 쓰기
-            TestWritingPage.open();
+        getKoreanCharacterWithHiragana: function(hiragana) {
+            return KeyHiraganaValueKoreanDictionary[hiragana];
+        },
+
+        onNext: function() {
+            if (true) { //Math.random() < 0.5){
+                // 쓰기
+                TestWritingPage.open();
+            }
+            else {
+                // 읽기
+                this.onReadingPageInitAndOpen();
+            }
+        },
+
+
+        onReadyForNextQuestion: function() {
+            // dequeue in here.
+            testHiraganaQueue.shift();
+
+            // and call onNext
+            this.onNext();
+        },
+
+
+        onReadingPageInitAndOpen: function() {
+            // 화면 초기화
+
+            // 화면 전환
+            $.mobile.changePage("#page-test-reading");
+        },
+
+        scoreForWriting: function(userHiraganaAnswer) {
+            scoringSheet[this.getCurrentHiragana()] = userHiraganaAnswer === this.getCurrentHiragana() ? Score.CORRECT : Score.INCORRECT;
+
         }
-        else {
-            // 읽기
-            onReadingPageInitAndOpen();
-        }
-    }
+    };
 
 
-    function onReadyForNextQuestion() {
-        // dequeue in here.
-        testHiraganaQueue.shift();
 
-        // and call onNext
-        onNext();
-    }
+})();
 
 
-    function onReadingPageInitAndOpen() {
-        // 화면 초기화
+module.exports = TestManager;
 
-        // 화면 전환
-        $.mobile.changePage("#page-test-reading");
-    }
-
-
-};
+var TestWritingPage = require('./test-writing.js');
+var Global = require('./global.js');
+var HiraganaArray = Global.HiraganaArray;
+var KeyHiraganaValueKoreanDictionary = Global.KeyHiraganaValueKoreanDictionary;
+var JqueryObject = Global.JqueryObject;
 
 /** @enum {string} */
 var Score = {

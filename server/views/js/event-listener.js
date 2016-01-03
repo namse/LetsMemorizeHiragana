@@ -1,18 +1,18 @@
-var EventListener = function(){
+module.exports = function(){
     var events = {};
 
-    function on(name, handler) {
+    this.on = function(name, handler) {
         if (events.hasOwnProperty(name))
             events[name].push(handler);
         else
             events[name] = [handler];
-    }
+    };
     
-    function addEventListener(name, handler) {
+    this.addEventListener = function(name, handler) {
         this.on(name, handler);
-    }
+    };
 
-    function removeEventListener(name, handler) {
+    this.removeEventListener = function(name, handler) {
         /* This is a bit tricky, because how would you identify functions?
            This simple solution should work if you pass THE SAME handler. */
         if (!events.hasOwnProperty(name))
@@ -21,9 +21,9 @@ var EventListener = function(){
         var index = events[name].indexOf(handler);
         if (index != -1)
             events[name].splice(index, 1);
-    }
+    };
 
-    function fireEvent(name, args) {
+    this.fireEvent = function(name, args) {
         if (!events.hasOwnProperty(name))
             return;
 
@@ -34,5 +34,5 @@ var EventListener = function(){
         for (var i = 0; i < l; i++) {
             evs[i].apply(null, args);
         }
-    }
+    };
 };

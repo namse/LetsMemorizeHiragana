@@ -1,4 +1,4 @@
-var HiraganaArray = [
+module.exports.HiraganaArray = [
     ["あ", "い", "う", "え", "お"],
     ["か", "き", "く", "け", "こ"],
     ["さ", "し", "す", "せ", "そ"],
@@ -12,7 +12,7 @@ var HiraganaArray = [
     ["ん"]
 ];
 
-var KeyHiraganaValueKoreanDictionary = {
+module.exports.KeyHiraganaValueKoreanDictionary = {
     "あ": "아",
     "い": "이",
     "う": "우",
@@ -98,3 +98,4 @@ var JqueryObject = {
 $(document).ready(function() {
     JqueryObject.init();
 });
+module.exports.JqueryObject = JqueryObject;

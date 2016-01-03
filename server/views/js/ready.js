@@ -1,5 +1,6 @@
-/*global HiraganaArray */
-/*global JqueryObject */
+var Global = require('./global.js');
+var HiraganaArray = Global.HiraganaArray;
+var JqueryObject = Global.JqueryObject;
 
 $(document).on('pagebeforeshow', '#page-ready', function() {
     for (var rowIndex = 0; rowIndex < HiraganaArray.length; rowIndex++) {
