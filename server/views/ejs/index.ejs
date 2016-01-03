@@ -9,17 +9,11 @@
     <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0">
 
     <link rel="stylesheet" href="/library/jqm/jquery.mobile-1.4.5.min.css">
-    <link rel="stylesheet" href="/css/fullScreen.css">
-    <link rel="stylesheet" href="/css/test.css">
+    <link rel="stylesheet" href="/css/full-screen.css">
+    <link rel="stylesheet" href="/css/test-writing.css">
+    <link rel="stylesheet" href="/css/test-writing-incorrect.css">
 
-    <script src="/library/jquery-2.1.4.min.js"></script>
-    <script src="/library/jqm/jquery.mobile-1.4.5.min.js"></script>
-    <script src="/library/long.min.js"></script>
-    <script src="/library/bytebuffer.min.js"></script>
-    <script src="/library/protobuf.min.js"></script>
-    <script type="text/javascript" src="/js/global.js"></script>
-    <script type="text/javascript" src="/js/ready.js"></script>
-    <script type="text/javascript" src="/js/test.js"></script>
+    <script src="/build/library-result.js"></script>
 </head>
 
 <body>
@@ -50,12 +44,38 @@
         <div data-role="main" class="ui-content">
             <h1 id='test-writing-korean' align='center'></h1>
             <div id='test-writing-canvas-container'>
-                <canvas id='test-writing-canvas' width="10" height="10"></canvas>
+                <canvas id='test-writing-canvas'></canvas>
             </div>
             <button id='test-writing-clear-button' class="ui-button" data-inline="true">지우기</button>
             <button id='test-writing-submit' class="ui-button" data-inline="true">제출</button>
         </div>
     </div>
+    
+    <div data-role="page" id='page-test-writing-incorrect'>
+        <div data-role="main" class="ui-content">
+            <div id='test-writing-incorrect-my-answer-container' class='ui-grid-a'>
+                <h1 class='ui-block-a'>내가 쓴 것</h1>
+                <div id='test-writing-incorrect-my-answer-canvas-container' class='ui-block-a'>
+                    <canvas id='test-writing-incorrect-my-answer-canvas'></canvas>
+                </div>
+                <h1 id='test-writing-incorrect-my-answer-recognized' class='ui-block-b' align='center'>아(あ)</h1>
+            </div>
+            <div id='test-writing-incorrect-correct-answer-container' class='ui-grid-solo'>
+                <h1>정답</h1>
+                <h1 id='test-writing-incorrect-correct-answer' align='center'>아 | あ</h1>
+            </div>
+            <div id='test-writing-incorrect-repeat-container' class='ui-grid-solo'>
+                <h1>다시 써보기</h1>
+                <div id='test-writing-incorrect-repeat-canvas-container'>
+                    <canvas id='test-writing-incorrect-repeat-canvas'></canvas>
+                </div>
+            </div>
+            <button id='test-writing-incorrect-next-button' class='ui-button'>다음</button>
+        </div>
+    </div>
+    
+    
+    <script src="/build/result.js"></script>
 </body>
 
 </html>

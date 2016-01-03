@@ -1,4 +1,4 @@
-var hiraganaArray = [
+var HiraganaArray = [
     ["あ", "い", "う", "え", "お"],
     ["か", "き", "く", "け", "こ"],
     ["さ", "し", "す", "せ", "そ"],
@@ -12,7 +12,7 @@ var hiraganaArray = [
     ["ん"]
 ];
 
-var keyHiraganaValueKoreanDictionary = {
+var KeyHiraganaValueKoreanDictionary = {
     "あ": "아",
     "い": "이",
     "う": "우",
@@ -62,3 +62,39 @@ var keyHiraganaValueKoreanDictionary = {
     "を": "오",
     "ん": "-ㄴ"
 };
+
+var JqueryObject = {
+    writing: {
+        page: null,
+        canvas: null,
+        koreanCharacter: null,
+        cavnasConatiner: null,
+        submit: null,
+        
+        init: function(){
+            JqueryObject.writing.page = $('#page-test-writing');
+            JqueryObject.writing.koreanCharacter = JqueryObject.writing.page.find('#test-writing-korean');
+            JqueryObject.writing.cavnasConatiner = JqueryObject.writing.page.find("#test-writing-canvas-container");
+            JqueryObject.writing.canvas = JqueryObject.writing.cavnasConatiner.find("#test-writing-canvas");
+            JqueryObject.writing.submit = JqueryObject.writing.page.find("#test-writing-submit");
+        }
+    },
+    ready: {
+        fieldset: null,
+    
+        init: function(){
+            JqueryObject.ready.fieldset = $('#page-ready fieldset');
+        }
+    },
+
+
+    init: function() {
+        JqueryObject.writing.init();
+        JqueryObject.ready.init();
+        
+    }
+};
+
+$(document).ready(function() {
+    JqueryObject.init();
+});

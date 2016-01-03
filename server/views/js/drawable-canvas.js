@@ -1,5 +1,5 @@
 /* global EventListener */
-var DrawableCanvas = function(jqueryCanvasObject, jqueryCanvasContainerObject){
+var DrawableCanvas = function(_jqueryCanvasObject, _jqueryCanvasContainerObject){
     EventListener.call(this);    
     
     
@@ -86,4 +86,4 @@ var DrawableCanvas = function(jqueryCanvasObject, jqueryCanvasContainerObject){
         self.clicked = false;
     });
     
-}
+};

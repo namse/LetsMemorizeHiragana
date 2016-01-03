@@ -16,18 +16,8 @@ TODO
 
 
 recognizer
-
-1. 파일 읽기 먼저
-http://stackoverflow.com/questions/27465432/path-of-current-node-js-c-addon
-
-2. recognizer pool을 만든다.
-pool.getRecognizer 하면 하나씩 튀어 나온다.
-반납도 꼭 해줘야한다.
-
-3. thread pool 과 함께 동작시킨다.
-https://gist.github.com/dmh2000/9519489
-
-
+recognizing이 잘 안됨.
+양질의 데이터를 얻어내는 방법을 생각해 볼 것.
 
 
 
@@ -35,5 +25,5 @@ css
 ios의 경우 위에 nav bar랑 bottom bar가 완전 신경쓰임;;
 
 
-
-return 으로 args가 잘 들어오는지 먼저 확인해볼것.
+grunt
+파일 압축을 위해 uglify와 cssmin 넣을 것.
