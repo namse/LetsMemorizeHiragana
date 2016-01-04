@@ -72,25 +72,47 @@ var JqueryObject = {
         submit: null,
         
         init: function(){
-            JqueryObject.writing.page = $('#page-test-writing');
-            JqueryObject.writing.koreanCharacter = JqueryObject.writing.page.find('#test-writing-korean');
-            JqueryObject.writing.cavnasConatiner = JqueryObject.writing.page.find("#test-writing-canvas-container");
-            JqueryObject.writing.canvas = JqueryObject.writing.cavnasConatiner.find("#test-writing-canvas");
-            JqueryObject.writing.submit = JqueryObject.writing.page.find("#test-writing-submit");
+            this.page = $('#page-test-writing');
+            this.koreanCharacter = this.page.find('#test-writing-korean');
+            this.cavnasConatiner = this.page.find("#test-writing-canvas-container");
+            this.canvas = this.cavnasConatiner.find("#test-writing-canvas");
+            this.submit = this.page.find("#test-writing-submit");
         }
     },
     ready: {
         fieldset: null,
     
         init: function(){
-            JqueryObject.ready.fieldset = $('#page-ready fieldset');
+            this.fieldset = $('#page-ready fieldset');
+        }
+    },
+    writingIncorrect: {
+        page: null,
+        myAnswerCanvasContainer: null,
+        myAnswerCanvas: null,
+        myAnswerRecognizedH1: null,
+        correctAnswerH1: null,
+        repeatCanvasContainer: null,
+        repeatCanvas: null,
+        nextButton: null,
+        
+        init: function(){
+            this.page = $('#page-test-writing-incorrect');
+            this.myAnswerCanvasContainer = this.page.find('#test-writing-incorrect-my-answer-canvas-container');
+            this.myAnswerCanvas = this.myAnswerCanvasContainer.find('#test-writing-incorrect-my-answer-canvas');
+            this.myAnswerRecognizedH1 = this.page.find('#test-writing-incorrect-my-answer-recognized');
+            this.correctAnswerH1 = this.page.find('#test-writing-incorrect-correct-answer');
+            this.repeatCanvasContainer = this.page.find('#test-writing-incorrect-repeat-canvas-container');
+            this.repeatCanvas = this.page.find('#test-writing-incorrect-repeat-canvas');
+            this.nextButton = this.page.find('#test-writing-incorrect-next-button');
         }
     },
 
 
     init: function() {
-        JqueryObject.writing.init();
-        JqueryObject.ready.init();
+        this.writing.init();
+        this.ready.init();
+        this.writingIncorrect.init();
         
     }
 };

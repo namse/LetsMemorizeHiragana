@@ -4,6 +4,9 @@ var ProtoPacket = ProtoBuilder.build("Packet");
 var ProtoStroke = ProtoPacket.Stroke;
 var ProtoPosition = ProtoStroke.Position;
 
+var DrawableCanvas = require('./drawable-canvas.js');
+var JqueryObject = require('./global.js').JqueryObject;
+
 var Position = function(x, y) {
     this.x = x;
     this.y = y;
@@ -11,12 +14,31 @@ var Position = function(x, y) {
 
 var StrokeData = function() {
     var data = [];
+    this.minPosition = new Position(Infinity, Infinity);
+    this.maxPosition = new Position(-Infinity, -Infinity);
+
 
     this.add = function(position, isNewStroke) {
         if (isNewStroke || data.length === 0) {
             data.push([]);
         }
         data[data.length - 1].push(position);
+
+        if (this.minPosition.x >= position.x) {
+            this.minPosition.x = position.x;
+        }
+
+        if (this.minPosition.y >= position.y) {
+            this.minPosition.y = position.y;
+        }
+
+        if (this.maxPosition.x < position.x) {
+            this.maxPosition.x = position.x;
+        }
+
+        if (this.maxPosition.y < position.y) {
+            this.maxPosition.y = position.y;
+        }
     };
 
     this.compress = function() {
@@ -43,7 +65,7 @@ var StrokeData = function() {
             var protoPositions = [];
             for (var positionIndex = 0; positionIndex < stroke.length; positionIndex++) {
                 var position = stroke[positionIndex];
-                var protoPosition = new ProtoPosition(position.x, position.y);
+                var protoPosition = new ProtoPosition(parseInt(position.x), parseInt(position.y));
                 protoPositions.push(protoPosition);
             }
             protoStrokes.push(new ProtoStroke(protoPositions));
@@ -53,6 +75,9 @@ var StrokeData = function() {
 
     this.reset = function() {
         data = [];
+
+        this.minPosition.x = this.minPosition.y = Infinity;
+        this.maxPosition.x = this.maxPosition.y = -Infinity;
     };
 };
 
@@ -69,7 +94,7 @@ var TestWritingPage = (function() {
     });
 
 
-    $(document).on("pageshow", '#page-test-writing', function() {
+    $(document).on("pageshow", JqueryObject.writing.page, function() {
         // check it is strange approach
         if (TestManager.getIsLoadingSuccess() === false) {
             $.mobile.changePage("#page-test-loading");
@@ -86,11 +111,11 @@ var TestWritingPage = (function() {
 
     function resize() {
         canvas.resizeCanvas();
-        canvas.on('strokeStart', function(x,y){
-           strokeData.add(new Position(x,y), true); 
+        canvas.on('strokeStart', function(x, y) {
+            strokeData.add(new Position(x, y), true);
         });
-        canvas.on('strokeMove', function(x,y){
-           strokeData.add(new Position(x,y), false); 
+        canvas.on('strokeMove', function(x, y) {
+            strokeData.add(new Position(x, y), false);
         });
         JqueryObject.writing.koreanCharacter.css({
             'font-size': Math.min(JqueryObject.writing.koreanCharacter.height(), JqueryObject.writing.koreanCharacter.width())
@@ -126,6 +151,16 @@ var TestWritingPage = (function() {
         TestManager.scoreForWriting(recognizedResult);
 
         // 2. show result.
+        if (false) { //if(recognizedResult === TestManager.getCurrentHiragana()){
+
+        }
+        else {
+            TestWritingIncorrectPage.open(JqueryObject.writing.canvas[0],
+                strokeData.minPosition,
+                strokeData.maxPosition,
+                recognizedResult);
+        }
+
     }
 
 
@@ -137,7 +172,7 @@ var TestWritingPage = (function() {
                 requestRecognizion();
             });
             // 화면 전환
-            $.mobile.changePage("#page-test-writing");
+            $.mobile.changePage(JqueryObject.writing.page);
         }
     };
 })();
@@ -145,6 +180,4 @@ var TestWritingPage = (function() {
 module.exports = TestWritingPage;
 
 var TestManager = require('./test-manager.js');
-var DrawableCanvas = require('./drawable-canvas.js');
-var JqueryObject = require('./global.js').JqueryObject;
-
+var TestWritingIncorrectPage = require('./test-writing-incorrect.js');

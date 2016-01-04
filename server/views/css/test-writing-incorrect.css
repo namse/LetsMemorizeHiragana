@@ -1,9 +1,19 @@
 #test-writing-incorrect-my-answer-container {
-    height:30vh;
+    height: 30vh;
 }
+
 #test-writing-incorrect-correct-answer-container {
-    height:30vh;
+    height: 30vh;
 }
+
 #test-writing-incorrect-repeat-container {
-    height:30vh;
+    height: 30vh;
+}
+
+#test-writing-incorrect-my-answer-canvas-container {
+    height: 100%;
+}
+
+#test-writing-incorrect-my-answer-recognized{
+    height: 100%;
 }
